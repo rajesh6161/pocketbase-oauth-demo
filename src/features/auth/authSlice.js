@@ -7,49 +7,9 @@ const initialState = {
   loading: false,
   error: null,
   loggedIn: false,
-  isRegistered: false,
+  authProviders: [],
 };
 
-export const login = createAsyncThunk(
-  'auth/login',
-  async (payload, thunkAPI) => {
-    try {
-      const res = await authService.login(payload);
-      // alert
-      toast.success('Login successful');
-      return res;
-    } catch (err) {
-      // alert
-      toast.error(err.data.message);
-      return thunkAPI.rejectWithValue({ error: err.data.message });
-    }
-  }
-);
-
-export const register = createAsyncThunk(
-  'auth/register',
-  async (payload, thunkAPI) => {
-    try {
-      const res = await authService.register(payload);
-      // alert
-      toast.success('Registeration successful');
-      return res;
-    } catch (error) {
-      // alert
-      let err = error.data.data;
-      if (err.email) {
-        toast.error(err.email.message);
-      } else if (err.password) {
-        toast.error(err.password.message);
-      } else if (err.passwordConfirm) {
-        toast.error(err.passwordConfirm.message);
-      } else {
-        toast.error('Something went wrong!');
-      }
-      return thunkAPI.rejectWithValue({ error: err });
-    }
-  }
-);
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -70,32 +30,7 @@ const authSlice = createSlice({
       }
     },
   },
-  extraReducers: {
-    [login.pending]: (state, action) => {
-      state.loading = true;
-    },
-    [login.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.user = action.payload.user;
-      state.loggedIn = true;
-    },
-    [login.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
-    [register.pending]: (state, action) => {
-      state.loading = true;
-    },
-    [register.fulfilled]: (state, action) => {
-      state.loading = false;
-      state.user = action.payload.user;
-      state.isRegistered = true;
-    },
-    [register.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
-  },
+  extraReducers: {},
 });
 
 export const { logout, setUserLoggedIn } = authSlice.actions;
