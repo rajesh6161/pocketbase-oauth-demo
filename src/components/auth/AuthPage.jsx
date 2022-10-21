@@ -6,6 +6,7 @@ import {
 } from '../../features/auth/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import Spinner from '../Spinner';
+import authService from '../../features/auth/authService';
 
 const AuthPage = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,18 @@ const AuthPage = () => {
       setLoginPage(true);
     }
   }, [isRegistered]);
+
+  const [authProviders, setAuthProviders] = useState([]);
+  const callback = (data) => {
+    if (data.length > 0) {
+      setAuthProviders(data);
+    }
+  };
+  useEffect(() => {
+    authService.oAuthMethods(callback);
+  }, []);
+
+  const oAuthHandler = () => {};
 
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -143,6 +156,14 @@ const AuthPage = () => {
 
               {loading ? <Spinner /> : loginPage ? 'Login' : 'Register'}
             </button>
+            {authProviders.map((method) => (
+              <a
+                className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-5"
+                onClick={oAuthHandler}
+              >
+                Login via {method.name}
+              </a>
+            ))}
           </div>
         </form>
       </div>

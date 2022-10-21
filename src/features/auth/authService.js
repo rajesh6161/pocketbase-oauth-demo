@@ -26,10 +26,21 @@ const logout = () => {
   window.location.reload();
 };
 
+const oAuthMethods = async (callback) => {
+  const authMethods = await client.users.listAuthMethods();
+  const listItems = [];
+  for (const provider of authMethods.authProviders) {
+    listItems.push(provider);
+  }
+  callback(listItems);
+  return listItems;
+};
+
 const authService = {
   login,
   register,
   logout,
+  oAuthMethods,
 };
 
 export default authService;
