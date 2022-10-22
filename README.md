@@ -3,6 +3,8 @@
 
 #### For beginner friendly Todo app using React+PocketBase visit: [blog](https://dev.to/rajesh6161/realtime-todo-app-using-react-and-pocketbase-3mf), [repo](https://github.com/rajesh6161/pocketbaseTodo) is now part of the official PocketBase [show-and-tell](https://github.com/pocketbase/pocketbase/discussions/categories/show-and-tell) and [awesome-pocketbase](https://github.com/benallfree/awesome-pocketbase/)
 
+#### PocketBase+React Realtime Blog: [Source](https://github.com/rajesh6161/pbRealtimeBlog) || [Live](https://pbrealtimeblog.vercel.app/)
+
 ## Setup for GitHub oAuth
 - Go to your GitHub settings -> oAuth Apps -> New oAuth App
 ![image](https://user-images.githubusercontent.com/40054161/197316727-67123a3c-688e-4042-abef-c7ed4a2685e9.png)
