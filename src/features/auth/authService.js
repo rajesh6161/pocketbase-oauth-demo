@@ -2,7 +2,6 @@ import { client } from '../../utils/config';
 
 const logout = () => {
   client.authStore.clear();
-  window.location.reload();
 };
 
 const oAuthMethods = async () => {
@@ -14,9 +13,25 @@ const oAuthMethods = async () => {
   return listItems;
 };
 
+const oAuthLogin = async (provider) => {
+  try {
+    const res = await client.users.authViaOAuth2(
+      provider.name,
+      provider.code,
+      provider.codeVerifier,
+      provider.redirectUrl
+    );
+
+    return res;
+  } catch (err) {
+    return err;
+  }
+};
+
 const authService = {
   logout,
   oAuthMethods,
+  oAuthLogin,
 };
 
 export default authService;
