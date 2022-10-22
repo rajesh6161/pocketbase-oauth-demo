@@ -1,68 +1,47 @@
-import { useEffect, useState } from 'react';
-import { DebounceInput } from 'react-debounce-input';
-import PocketBase from 'pocketbase';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { client } from './utils/config';
+
+import PublicPage from './routes/PublicPage';
+import { Route, Routes } from 'react-router-dom';
+import AuthPage from './routes/AuthPage';
+import ProtectedRoute from './routes/ProtectedRoute';
+import ProfilePage from './routes/ProfilePage';
+import Redirect from './routes/Redirect';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { setUserLoggedIn } from './features/auth/authSlice';
 
 function App() {
-  const client = new PocketBase('http://127.0.0.1:8090');
-
-  const [realtimeWord, setRealtimeWord] = useState('');
-  const [recordId, setRecordId] = useState('');
-
-  const updateWord = async (rec_id, letter) => {
-    try {
-      await client.records.update('wordle', rec_id, {
-        word: letter,
-      });
-    } catch (error) {
-      console.log('Error occurred while updating the todo', error);
-    }
-  };
-
-  const initWord = async () => {
-    try {
-      let word = await client.records.getFullList('wordle', 1, {
-        sort: '-created',
-      });
-      if (word.length === 0) {
-        await client.records.create('wordle', {
-          word: '',
-        });
-        let w = await client.records.getFullList('wordle', 1, {
-          sort: '-created',
-        });
-        setRecordId(w[0].id);
-      } else {
-        setRecordId(word[0].id);
-      }
-    } catch (error) {
-      console.log('Error occurred while getting word', error.data);
-    }
-  };
-  console.log(recordId);
-  useEffect(() => {
-    client.realtime.subscribe('wordle', function (e) {
-      console.log('realtime', e.record);
-      setRealtimeWord(e.record);
-    });
-    return () => {
-      client.realtime.unsubscribe();
-    };
-  });
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.auth);
+  // useEffect(() => {
+  //   client.realtime.subscribe('', function (e) {});
+  //   return () => {
+  //     client.realtime.unsubscribe();
+  //   };
+  // });
 
   useEffect(() => {
-    initWord();
-  }, []);
+    dispatch(setUserLoggedIn());
+  }, [loading]);
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen ">
-      <DebounceInput
-        minLength={1}
-        debounceTimeout={0}
-        onChange={(e) => {
-          updateWord(recordId, e.target.value);
-        }}
-      />
-      <p>{realtimeWord.word}</p>
+    <div className="flex flex-col justify-center items-center h-screen bg-gray-900">
+      <Routes>
+        <Route path="/" element={<PublicPage />} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/redirect" element={<Redirect />} />
+        <Route path="*" element={<div>Not Found</div>} />
+      </Routes>
     </div>
   );
 }
